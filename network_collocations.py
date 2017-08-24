@@ -69,7 +69,7 @@ for word in freq_dic:
 	if freq_dic[word] > 2:
 		color_map.append(color3)
 		size_map.append(1600)
-	elif freq_dic[word] <=2 and freq_dic[word] > 1:
+	elif freq_dic[word] >1 and freq_dic[word] <=4:
 		color_map.append(color2)
 		size_map.append(1200)
 	else: 
