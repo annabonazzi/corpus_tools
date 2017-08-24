@@ -2,8 +2,9 @@
 '''
 22/08/2017
 
-# Script to make a network plot. 
-Developed from model script on https://www.udacity.com/wiki/creating-network-graphs-with-python
+# Script to make a network chart.
+In particular: network of the collocates of a chosen word in four different classes. 
+Developed from model on https://www.udacity.com/wiki/creating-network-graphs-with-python
 
 '''
 # To time the script
@@ -11,21 +12,27 @@ from datetime import datetime
 startTime = datetime.now()
 
 import os, glob, re
-
-#--------------------------
 import networkx as nx
 import matplotlib.pyplot as plt
+#--------------------------
+# MAIN VARIABLES FOR USER TO CHANGE:
+
+keyword = "approvisionnement"
+color1 = "yellow"; color2 = "orange"; color3 = "red" # Node colors
+txtcolor = "#3c3838" # Choose color codes from http://htmlcolorcodes.com/
+txtfont = "DejaVu Sans"
+graph_layout = "spring" # Choose from: spring, spectral, random, shell
+
+folder = "/home/bonz/Documents/Corpus_work/GEothermie2020/collocates/bearbeitet/nouns/" # Where input files are
+#--------------------------
 
 # Creates empty networkx graph
 G=nx.Graph()
 
 # Prepares content as list of tuples
 graph = []
-keyword = "approvisionnement"
-folder = "/home/bonz/Documents/Corpus_work/GEothermie2020/collocates/bearbeitet/nouns/"
 os.chdir(folder)
 files = glob.glob("*/*" + keyword + ".txt")
-
 for file1 in files:
 	with open (file1, 'r') as f:
 		for line in f:
@@ -42,7 +49,6 @@ for edge in graph:
 			freq_dic[word] = 1
 
 # Possible network layouts
-graph_layout = "spring"
 if graph_layout == 'spring':
 	graph_pos=nx.spring_layout(G)
 elif graph_layout == 'spectral':
@@ -58,17 +64,16 @@ elif graph_layout == 'shell':
 # Prepares scales of sizes / colors
 color_map = []
 size_map = []
-fontsize_map = []
 
 for word in freq_dic:
 	if freq_dic[word] > 2:
-		color_map.append('red')
+		color_map.append(color3)
 		size_map.append(1600)
 	elif freq_dic[word] <=2 and freq_dic[word] > 1:
-		color_map.append('orange')
+		color_map.append(color2)
 		size_map.append(1200)
 	else: 
-		color_map.append('yellow')
+		color_map.append(color1)
 		size_map.append(800)
 
 nx.draw_networkx_nodes(G, graph_pos, node_size=size_map, alpha=0.3, node_color =color_map)
@@ -81,8 +86,6 @@ for tup in graph:
 nx.draw_networkx_edges(G, graph_pos, width=width_map, alpha=0.3, edge_color="#8e7e8b")
 
 # Node labels
-txtcolor = "#3c3838"
-txtfont = "DejaVu Sans"
 nx.draw_networkx_labels(G, graph_pos,font_size=13, fontname=txtfont, color=txtcolor)
 
 # Edge labels
