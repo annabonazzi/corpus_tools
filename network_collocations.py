@@ -83,7 +83,7 @@ width_map = []
 for tup in graph:
 	width_map.append(int(1 + freq_dic[tup[1]] * 1))
   
-nx.draw_networkx_edges(G, graph_pos, width=width_map, alpha=0.3, edge_color="#8e7e8b")
+nx.draw_networkx_edges(G, graph_pos, width=width_map, alpha=0.4, edge_color="#8e7e8b")
 
 # Node labels
 nx.draw_networkx_labels(G, graph_pos,font_size=13, fontname=txtfont, color=txtcolor)
@@ -102,7 +102,7 @@ nx.draw_networkx_edge_labels(G, graph_pos, label_pos=0.3, edge_labels=edge_label
 '''
 
 # Title
-plt.title('"approvisionnement"\n\nKollokatoren nach Klasse', color=txtcolor, fontname = txtfont, fontsize = '16')
+plt.title('"' + keyword + '"\n\nKollokatoren nach Klasse', color=txtcolor, fontname = txtfont, fontsize = '16')
 
 # Legend
 leg = plt.legend(loc='best', labels = [" PAB: industry\n PBV: media\n PFU: policy makers"], frameon=False)#, facecolor = 'r', edgecolor = 'b' # Don't have to unless I want to change them
