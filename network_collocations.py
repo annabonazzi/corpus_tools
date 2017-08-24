@@ -29,7 +29,7 @@ folder = "/home/bonz/Documents/Corpus_work/GEothermie2020/collocates/bearbeitet/
 # Creates empty networkx graph
 G=nx.Graph()
 
-# Prepares content as list of tuples (keywor, collocate)
+# Prepares content as list of tuples (keyword, collocate)
 graph = []
 os.chdir(folder)
 files = glob.glob("*/*" + keyword + ".txt")
