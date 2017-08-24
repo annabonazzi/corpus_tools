@@ -3,7 +3,7 @@
 22/08/2017
 
 
-# Script to make a network plot. Model script from https://www.udacity.com/wiki/creating-network-graphs-with-python
+# Script to make a network plot. Developed from model script from https://www.udacity.com/wiki/creating-network-graphs-with-python
 
 '''
 # To time the script
