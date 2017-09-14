@@ -2,9 +2,19 @@
 '''
 # Anna Bonazzi, 14/09/2017
 
-Script to model topics with LDA (Latent Dirichlet Allocation). Sample script assembled from https://www.analyticsvidhya.com/blog/2016/08/beginners-guide-to-topic-modeling-in-python/
+Topic modeling script to identify document topics with LDA (Latent Dirichlet Allocation). 
+Based on model from https://www.analyticsvidhya.com/blog/2016/08/beginners-guide-to-topic-modeling-in-python/
 
 '''
+#--------------------------
+# VARIABLES FOR USER TO CHANGE
+input_file = '/path/to/file.txt'
+output_file = 'path/to/saved_topics.txt'
+topics_number = 5
+words_per_topic = 6
+lang = 'english' # Doc language (lower case)
+#--------------------------
+# Libraries
 # To time the script
 from datetime import datetime
 startTime = datetime.now()
@@ -15,16 +25,9 @@ from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 import string
 # Importing Gensim (only python 2! .decode('utf-8'))
-# if python3: install with "pip2 install gensim", then run script with "python2 script.py"
+# If python3: install with "pip2 install gensim", then run script with "python2 script.py"
 import gensim
 from gensim import corpora
-#--------------------------
-# VARIABLES FOR USER TO CHANGE
-input_file = '/path/to/file.txt'
-output_folder = 'path/to/saved_topics/'
-topic_number = 5
-words_per_topic = 6
-
 #--------------------------
 # 1) Use different strings as docs:
 
@@ -41,22 +44,20 @@ for i in range (0, len(docs)):
 '''
 # 2) Use original file's paragraphs as different docs
 
-files = glob.glob("S:\\pools\\l\\L-Korpusgruppe\\Working_Files\\Workshop_CQPWeb\\elektr_korpus\\B*.htm")
-counter = 0
-for fl in files:
-	counter = int(counter) + 1
-	doc_name = fl[70:-4]
-	docs = []
-	with open (fl, "r") as f:
-		my_doc = f.readlines() # Text as list, elements are paragraphs
-		for doc in my_doc:
-			doc = doc.decode("utf-8")
-			docs.append(doc)
+#files = glob.glob("/input_folder/B*.htm")
+#for fl in files:
+#	doc_name = fl[70:-4]
+
+docs = []
+with open (input_file, "r") as f:
+	my_doc = f.readlines() # Text as list, elements are paragraphs
+	for doc in my_doc:
+		doc = doc.decode("utf-8")
+		docs.append(doc)
 '''
 
 # Cleaning and preprocessing
-langs = 
-stop = set(stopwords.words('german')) # Also add custom "useless" words, such as stop = stopwords.words('english') + ['rt', 'via']
+stop = set(stopwords.words(lang)) # Also add custom "useless" words, such as stop = stopwords.words('english') + ['rt', 'via']
 exclude = set(string.punctuation)
 lemma = WordNetLemmatizer()
 def clean(doc):
@@ -64,11 +65,8 @@ def clean(doc):
 	punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
 	normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
 	return normalized
-# 1) If docs is a list
-doc_clean = [clean(doc).split() for doc in docs]
 
-# 2) If docs is a string
-#doc_clean = [clean(docs).split()]
+doc_clean = [clean(doc).split() for doc in docs]
 
 # Preparing Document-Term Matrix
 
@@ -76,7 +74,7 @@ doc_clean = [clean(doc).split() for doc in docs]
 import gensim
 from gensim import corpora
 
-# Creating the term dictionary of our courpus, where every unique term is assigned an index. 
+# Creating the term dictionary of our corpus, where every unique term is assigned an index. 
 
 dictionary = corpora.Dictionary(doc_clean)
 
@@ -89,14 +87,17 @@ doc_term_matrix = [dictionary.doc2bow(doc) for doc in doc_clean]
 Lda = gensim.models.ldamodel.LdaModel
 
 # Running and Trainign LDA model on the document term matrix.
-ldamodel = Lda(doc_term_matrix, num_topics=3, id2word = dictionary, passes=50)
+ldamodel = Lda(doc_term_matrix, num_topics=topics_number, id2word = dictionary, passes=50)
 
 # Results
-results = (ldamodel.print_topics(num_topics=3, num_words=3))
+results = (ldamodel.print_topics(num_topics=topics_number, num_words=words_per_topic))
 
+fhandle = open (output_file, 'a')
 for r in results:
-	print (r)
-	# New document starts
+	print ('Topic '+str(r[0] + 1)+':\t'+str(', '.join(r[1].split(' + ')).encode('utf-8')))
+	fhandle.write('Topic '+str(r[0] + 1)+':\t'+str(', '.join(r[1].split(' + ')).encode('utf-8')) + '\n\n')
+fhandle.close()	
+# New document starts
 
 #--------------------------
 # To time the script
