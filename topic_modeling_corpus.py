@@ -35,7 +35,7 @@ from gensim import corpora
 counter = 0
 for cl in classes:
 	flag = 0
-	fhandle = open (output_folder+cl+'_topics.txt', 'a')
+	fhandle = open (output_folder+cl+'_'+'_'+lang'+'topics.txt', 'a')
 	counter += 1
 	print ('For class ' + cl + ':\n')
 	text_counter = 0
