@@ -9,7 +9,7 @@ Language attributes are taken from the <text> line of every text.
 #--------------------------
 # VARIABLES FOR USER TO CHANGE:
 
-corpus = 'path/to/corpus.vrt'
+corpus = '/path/to/corpus.vrt'
 #selected_sources = '/path/to/list/of/corpus_sources/as/filter.txt' # !! Comment out if not needed
 stats_file = '/path/to/file/to/save/freq_stats.txt'
 
@@ -35,7 +35,6 @@ frequency = 'permillion' # Options: 'permillion', 'absolute'
 # To time the script
 from datetime import datetime
 startTime = datetime.now()
-
 import os, glob, re
 import numpy as np
 import matplotlib
