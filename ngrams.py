@@ -168,7 +168,6 @@ for tup in sorted_tuples:
 	if tup[1] >= min_freq:
 		print (str(tup[1]) + '\t' + str(tup[0].encode('utf-8')) + "\n")
 '''
-
 #--------------------------
 # To time the script
 time = datetime.now() - startTime
