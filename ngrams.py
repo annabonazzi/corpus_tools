@@ -5,34 +5,12 @@ Anna Bonazzi, 15/08/2017
 Script to get ngrams (sentence units / word chains) of desired length from a corpus. 
 Makes ngrams for different corpus sections (in this case, corpus is divided by class and language), returns absolute frequency and frequency per million.
 
-Option 1) uses nltk (respects capitalization, accepts 1 ngram length only)
-Option 2) uses scikit-learn (doesn't respect capitalization, accepts a min and max ngram length window. Currently commented out).
+Option 1) - now active - uses nltk (respects capitalization, accepts 1 ngram length only)
+Option 2) - now commented out - uses scikit-learn (doesn't respect capitalization, accepts a min and max ngram length window).
 
 ('.decode('utf-8')' mess necessary for python 2.7, not for python 3)
 
-Basic structure:
-text = 'In a hole in the ground there lived a hobbit'
-ngram_lenght = 3
-searchword = 'hobbit' # Optional
-grams = ngrams(text.split(), ngram_length)
-sorted_ngrams = {}
-for g in grams:
-	try:
-		if searchword in g:
-			if g in sorted_ngrams:
-				sorted_ngrams[g] += 1
-			else:
-				sorted_ngrams[g] = 1
-	except:
-		if g in sorted_ngrams:
-			sorted_ngrams[g] += 1
-		else:
-			sorted_ngrams[g] = 1
-# Sorts by frequency
-sorted_tuples = sorted(sorted_ngrams.items(), key=lambda pair: pair[1], reverse=True)
-with open (output_file, 'a') as out:
-	for tup in sorted_tuples:
-		out.write(tup)
+See bottom for basic ngram creation structure
 '''
 #------------------------------
 # VARIABLES FOR USER TO CHANGE
@@ -42,10 +20,10 @@ output_folder = '/path/to/folder/'
 
 langs = ['it', 'de', 'fr', 'en']
 unit = 'wordform' # Options: 'wordform', 'pos', 'lemma'
-n = 3 # Ngram window with nltk
-min_ = 5; max_ = 5 # Ngram window with sci-kit learn
+n = 3 # Ngram length with nltk
+#min_ = 5; max_ = 5 # Min and max ngram length with sci-kit learn
 
-min_freq = 2 # Minimum ngram frequency
+min_freq = 2 # Minimum frequency of ngram in corpus
 max_number = 500 # Number of ngrams to show
 
 #searchword = 'hobbit' # Comment out if not needed
@@ -99,7 +77,7 @@ for lang in langs:
 
 	texts = []
 	def prepare_text(dic, cl):
-		# Text are tuples of 1) text and 2) class label
+		# Texts are savedas tuples of 1) text and 2) class label
 		text = (' '.join(dic), cl)
 		texts.append(text) 
 
@@ -128,18 +106,14 @@ for lang in langs:
 
 		sorted_tuples = sorted(sorted_ngrams.items(), key=lambda pair: pair[1], reverse=True)
 		count = 0
+		# Prints out
 		with open (output_folder + str(n)+'-grams_'+lang+'_'+text[1]+'_'+unit+'.txt', 'a') as out:
 			for tup in sorted_tuples:
 				if tup[1] >= min_freq and count <= max_number and '</s>' not in tup[0]:
 					count += 1
 					# Counts frequency per million 
 					pmi = float('{:.2f}'.format(int(tup[1]) * 1000000 / tot_grams))
-					if n == 5:
-						out.write(str(pmi) + '\t' + str(tup[1]) + '\t' + str(tup[0][0]) + '\t' + str(tup[0][1]) + '\t' + str(tup[0][2]) + '\t' + str(tup[0][3]) + '\t' + str(tup[0][4]) +'\n')
-					elif n == 3:
-						out.write(str(pmi) + '\t' + str(tup[1]) + '\t' + str(tup[0][0]) + '\t' + str(tup[0][1]) + '\t' + str(tup[0][2]) +'\n')
-					else:
-						out.write(str(pmi) + '\t' + str(tup) +'\n')
+					out.write(str(pmi) + '\t' + str(tup[1]) + '\t' + str(' '.join(tup[0]) +'\n')
 					
 	sorted_tuples = {}
 				
@@ -167,6 +141,32 @@ sorted_tuples = sorted(ngrams.items(), key=lambda pair: pair[1], reverse=False) 
 for tup in sorted_tuples:
 	if tup[1] >= min_freq:
 		print (str(tup[1]) + '\t' + str(tup[0].encode('utf-8')) + "\n")
+'''
+#-----------------------------							  
+'''
+Basic structure:
+text = 'In a hole in the ground there lived a hobbit'
+ngram_lenght = 3
+searchword = 'hobbit' # Optional
+grams = ngrams(text.split(), ngram_length)
+sorted_ngrams = {}
+for g in grams:
+	try:
+		if searchword in g:
+			if g in sorted_ngrams:
+				sorted_ngrams[g] += 1
+			else:
+				sorted_ngrams[g] = 1
+	except:
+		if g in sorted_ngrams:
+			sorted_ngrams[g] += 1
+		else:
+			sorted_ngrams[g] = 1
+# Sorts by frequency
+sorted_tuples = sorted(sorted_ngrams.items(), key=lambda pair: pair[1], reverse=True)
+with open (output_file, 'a') as out:
+	for tup in sorted_tuples:
+		out.write(tup)
 '''
 #--------------------------
 # To time the script
