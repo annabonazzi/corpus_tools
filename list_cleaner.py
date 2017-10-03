@@ -5,15 +5,14 @@ Script to clean a wordlist of words mixed with numbers (clean all lists or pick 
 '''
 #---------------------
 # VARIABLES FOR USER TO CHANGE
-input = '/home/bonz/Documents/Corpus_work/GEothermie2020/frequenz/freq_en.txt'
+input_file = '/home/bonz/Documents/Corpus_work/GEothermie2020/frequenz/freq_en.txt'
 output = '/home/bonz/Documents/Corpus_work/GEothermie2020/frequenz/freq_en2.txt'
 #---------------------
 import re
 dic = {}
-with open (input, 'r') as f:
+with open (input_file, 'r') as f:
 	# Takes part of all lines
-	words = f.readlines()
-	for word in words:
+	for word in f: # 705578    the  [#16737730-#17443307]
 		with open (output, 'a') as o:
 			word.replace('\t', ' ')
 			o.write(word.split(' ')[0] + '\t' + word.split(' ')[1] + '\n')
@@ -27,5 +26,5 @@ with open (input, 'r') as f:
 			print word
 			with open (output, 'w') as out:
 				out.write(word + '\n')
-  '''
+  	'''
 print ('Done!\n')
