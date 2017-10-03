@@ -116,8 +116,7 @@ for lang in langs:
 					out.write(str(pmi) + '\t' + str(tup[1]) + '\t' + str(' '.join(tup[0]) +'\n')
 					
 	sorted_tuples = {}
-				
-
+	
 # 2) With sci-kit learn (faster, less precise, no capital letters)
 '''
 vect = CountVectorizer(ngram_range=(min_,max_)) 
