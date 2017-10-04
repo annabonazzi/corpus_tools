@@ -30,7 +30,6 @@ coll_measure = 'likelihood_ratio' # Options: 'likelihood_ratio', 'pmi'
 # To time the script
 from datetime import datetime
 startTime = datetime.now()
-
 import os, glob, re, sys
 # If needed: first run "sudo pip install nltk"
 import nltk
