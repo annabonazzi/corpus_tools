@@ -136,13 +136,11 @@ for sw in searchwords:
 
 		# Sorts and prints out
 		sorted_tuples = sorted(collocates.items(), key=lambda pair: pair[1], reverse=True)
-		for tup in sorted_tuples:
-			print(str('{0:.4f}'.format(tup[1])) + '\t' + str(tup[0].encode('utf-8')) + '\n')
-		'''
 		with open (output_folder + lang + '_' + sw + '.txt', 'a') as out:
 			for tup in sorted_tuples:
-				out.write(str('{0:.4f}'.format(tup[1])) + '\t' + str(tup[0]) + '\n') # tup[0].encode('utf-8')
-		'''
+				out.write(str('{0:.4f}'.format(tup[1])) + '\t' + str(tup[0].encode('utf-8')) + '\n')
+				print(str('{0:.4f}'.format(tup[1])) + '\t' + str(tup[0].encode('utf-8')) + '\n')
+
 		collocates = {} # Resets
 
 #--------------------------
