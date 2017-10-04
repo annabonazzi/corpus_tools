@@ -6,17 +6,17 @@ Anna Bonazzi, 06/09/2017
 Script to find collocates of specific words from a corpus.
 
 What the script does:
-	1) Picks corpus texts with chosen language, puts them together
+	1) Picks corpus texts with chosen language, puts them together as word list
 	2) Finds collocations (basis-collocate pairs) in window of given size
 	3) Selects collocations containing the desired searchword or basis
-	4) Sorts the searchword's collocates by frequency/log-likelihood value
+	4) Sorts the searchword's collocates by log-likelihood or pmi value
 
 ! Requires all the encode/decode mess in python2.7. Comment it out for python 3.
 '''
 #--------------------------
 # VARIABLES FOR USER TO CHANGE:
 
-searchwords = ['association']
+searchwords = ['association', 'club']
 lang = 'fr'
 #languages = ['fr', 'de'] # For list of languages, make one more "for" loop
 
@@ -121,8 +121,7 @@ for sw in searchwords:
 			bi_list = bi_finder.score_ngrams(bigram_measures.pmi)
 	
 	#----------------------------------------	
-	# 3) Counts frequency of collocates (sums log-lik.-value of collocations, not pure word frequency, to account for each word's different importance level)
-
+	# 3) Sorts collocates by their log-lik or pmi value
 		collocates = {}
 		# Prepares to remove stopwords
 		pairs = {'de' : 'german', 'fr' : 'french', 'en' : 'english', 'it' : 'italian'}
