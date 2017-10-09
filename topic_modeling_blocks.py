@@ -3,20 +3,10 @@
 # Anna Bonazzi, 14/09/2017
 Script to model document topics with LDA (Latent Dirichlet Allocation). Sample script assembled from https://www.analyticsvidhya.com/blog/2016/08/beginners-guide-to-topic-modeling-in-python/
 
-The script extracts texts with chosen attributes from the corpus and analyzes them in blocks of chosen length
+The script extracts texts with chosen attributes from the corpus and analyzes them in blocks of chosen length.
 
-Current settings for python3. Additional ".decode('utf-8')" on strings required for python2.7 (currently there but commented out, uncomment if needed).
+Works only for python 2 (gensim currently unavailable for python3))
 '''
-# VARIABLES FOR USER TO CHANGE
-
-input_file = '/home/bonz/Documents/Corpora/geothermie.vrt'
-output_folder = '/home/bonz/Documents/Corpus_work/GEothermie2020/topics/'
-lang = 'fr'
-topic_number = 300
-words_per_topic = 6
-text_block = 100000
-
-#---------------------------
 # To time the script
 from datetime import datetime
 startTime = datetime.now()
@@ -24,10 +14,19 @@ import os, glob, re, nltk
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 import string
-# Importing Gensim (only python 2! .decode('utf-8'))
-# If python3: install with "pip2 install gensim", then run script with "python2.7 script.py"
+# Importing Gensim (only python 2! .decode('utf-8')). If python3: install with "pip2 install gensim", then run script with "python2.7 script.py"
 import gensim
 from gensim import corpora
+#---------------------------
+# VARIABLES FOR USER TO CHANGE
+
+input_file = '/path/to/corpus_file.vrt'
+output_folder = '/path/to/topics_folder/'
+lang = 'fr'
+topic_number = 300
+words_per_topic = 6
+text_block = 100000 # size of text chunks to divide the corpus in
+
 #---------------------------
 
 # 1) Prepares text to be modeled as list of strings
@@ -43,17 +42,17 @@ with open (input_file, 'r') as f:
 		if '</text>' not in line: # Works text by text
 			if '<' not in line:
 				# Lemmas [2], wordforms [0], pos [1]
-				chunk.append(line.split("\t")[2])#.decode('utf-8'))
+				chunk.append(line.split("\t")[2].decode('utf-8'))
 			elif '<text' in line:
-				chunk.append(line)#.decode('utf-8'))
+				chunk.append(line.decode('utf-8'))
 		else: # Meets text end, works on temporary text chunk
 			text_counter += 1
-			chunk.append(line)#.decode('utf-8'))
+			chunk.append(line.decode('utf-8'))
 		  	# Searches for chosen lang/class combination
 			regex = re.search('language="'+lang+'".*?subclass=".*?".*?', ''.join(chunk))
 			if regex:
 				for word in chunk:
-					if '<' not in word and '@card@' not in word and '©' not in word and 'être' not in word: # .decode for strange words
+					if '<' not in word and '@card@' not in word and '©'.decode('utf-8') not in word and 'être'.decode('utf-8') not in word:
 						doc.append(word)
 				docs.append(' '.join(doc))
 			chunk = []
@@ -109,8 +108,8 @@ for i in range(0, len(docs), text_block):
 	results = (ldamodel.print_topics(num_topics=topic_number, num_words=words_per_topic))
 
 	for r in results:
-		print ('Topic '+str(r[0] + 1)+':\t'+str(', '.join(r[1].split(' + ')))) # join().encode('utf-8')
-		fhandle.write('Topic '+str(r[0] + 1)+':\t'+str(', '.join(r[1].split(' + '))) + '\n\n') # join().encode('utf-8')
+		print ('Topic '+str(r[0] + 1)+':\t'+str(', '.join(r[1].split(' + ')).encode('utf-8')))
+		fhandle.write('Topic '+str(r[0] + 1)+':\t'+str(', '.join(r[1].split(' + ')).encode('utf-8')) + '\n\n')
 	fhandle.close()
 	results = []
 	doc_term_matrix = []
