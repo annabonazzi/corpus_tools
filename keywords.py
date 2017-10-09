@@ -2,9 +2,9 @@
 '''
 Anna Bonazzi, 06/10/2017
 
-Script to extract keywords with log-likelihood value through a comparison of two corpora
+Script to extract corpus keywords with log-likelihood test through a comparison with another corpus
 
-Additional ".decode('utf-8')" on strings for python2.7, not for python3. Currently commented out. Uncomment if needed.
+Current settings for python3. Additional ".decode('utf-8')" on strings required for python2.7 (currently there but commented out, uncomment if needed).
 '''
 #--------------------------
 # VARIABLES FOR USER TO CHANGE
