@@ -14,6 +14,7 @@ input_file = '/path/to/corpus_file.vrt'
 output_folder = '/path/to/topics_folder/'
 topic_number = 5
 words_per_topic = 6
+min_freq = 5 # Minimum word frequency accaptable (rare words are ignored)
 lang = 'en'
 classes = ['pab_energiedienstleister_hersteller', 'pab_foren', 'pab_mobilitaetsdienstleister', 'pab_ngo', 'pab_verbraucher', 'pbv_bildung', 'pbv_fachzeitung', 'pbv_newsdienste', 'pbv_tageszeitung', 'pbv_wochenzeitung', 'peb_foren', 'peb_wissenschaft', 'pfu_bund', 'pfu_foren', 'pfu_gemeinde', 'pfu_initiativ_referendumskomitees', 'pfu_kanton', 'pfu_kommission', 'pfu_partei', 'pfu_projekt', 'pfu_regionale_behoerden-verbuende', 'pfu_stadt']
 #---------------------------
@@ -81,7 +82,7 @@ for cl in classes:
 					word_count[word] += 1
 				else:
 					word_count[word] = 1
-			stop_free = " ".join([word for word in doc.lower().split(' ') if word not in stop and word_count[word] > 5])
+			stop_free = " ".join([word for word in doc.lower().split(' ') if word not in stop and word_count[word] > min_freq])
 			punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
 			normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
 			return normalized
