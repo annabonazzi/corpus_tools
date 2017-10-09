@@ -4,6 +4,8 @@
 Script to model document topics with LDA (Latent Dirichlet Allocation). Sample script assembled from https://www.analyticsvidhya.com/blog/2016/08/beginners-guide-to-topic-modeling-in-python/
 
 The script extracts texts with chosen attributes from the corpus and analyzes them in blocks of chosen length
+
+Current settings for python3. Additional ".decode('utf-8')" on strings required for python2.7 (currently there but commented out, uncomment if needed).
 '''
 # VARIABLES FOR USER TO CHANGE
 
