@@ -86,9 +86,8 @@ for word in word_dic1:
 		else:
 			all_keywords[word] = loglik
 
+# Sorts, prints out.  (tup[0].encode('utf-8')), (tup[1]).encode('utf-8') for printing out
 sorted_tuples = sorted(keywords.items(), key=lambda pair: pair[1], reverse=True)
-# (tup[0].encode('utf-8')), (tup[1]).encode('utf-8')
-
 with open (output_folder+lang+'_significant.txt', 'a') as out:
 	for tup in sorted_tuples:
 		print (str(tup[1]) + "\t" + str(tup[0]) + "\n")
