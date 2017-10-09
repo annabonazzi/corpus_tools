@@ -4,14 +4,22 @@
 
 Script to model document topics with LDA (Latent Dirichlet Allocation). Sample script assembled from https://www.analyticsvidhya.com/blog/2016/08/beginners-guide-to-topic-modeling-in-python/
 
-The script extracts texts with chosen attributes from the corpus and analyzes them in blocks of chosen length
+The script extracts texts with chosen attributes (language, class) from the corpus
 
-Current settings for python3. Additional ".decode('utf-8')" on strings required for python2.7 (currently there but commented out, uncomment if needed).
+Works only for python2 (gensim currently unavailable for python3).
 '''
+# VARIABLES FOR USER TO CHANGE
+
+input_file = '/path/to/corpus_file.vrt'
+output_folder = '/path/to/topics_folder/'
+topic_number = 5
+words_per_topic = 6
+lang = 'en'
+classes = ['pab_energiedienstleister_hersteller', 'pab_foren', 'pab_mobilitaetsdienstleister', 'pab_ngo', 'pab_verbraucher', 'pbv_bildung', 'pbv_fachzeitung', 'pbv_newsdienste', 'pbv_tageszeitung', 'pbv_wochenzeitung', 'peb_foren', 'peb_wissenschaft', 'pfu_bund', 'pfu_foren', 'pfu_gemeinde', 'pfu_initiativ_referendumskomitees', 'pfu_kanton', 'pfu_kommission', 'pfu_partei', 'pfu_projekt', 'pfu_regionale_behoerden-verbuende', 'pfu_stadt']
+#---------------------------
 # To time the script
 from datetime import datetime
 startTime = datetime.now()
-
 import os, glob, re
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
@@ -21,16 +29,6 @@ import string
 import gensim
 from gensim import corpora
 #---------------------------
-# VARIABLES FOR USER TO CHANGE
-
-input_file = '/home/bonz/Documents/Corpora/geothermie.vrt'
-output_folder = '/home/bonz/Documents/Corpus_work/GEothermie2020/topics/'
-topic_number = 5
-words_per_topic = 6
-lang = 'en'
-classes = ['pab_energiedienstleister_hersteller', 'pab_foren', 'pab_mobilitaetsdienstleister', 'pab_ngo', 'pab_verbraucher', 'pbv_bildung', 'pbv_fachzeitung', 'pbv_newsdienste', 'pbv_tageszeitung', 'pbv_wochenzeitung', 'peb_foren', 'peb_wissenschaft', 'pfu_bund', 'pfu_foren', 'pfu_gemeinde', 'pfu_initiativ_referendumskomitees', 'pfu_kanton', 'pfu_kommission', 'pfu_partei', 'pfu_projekt', 'pfu_regionale_behoerden-verbuende', 'pfu_stadt']
-#---------------------------
-
 # 1) Prepares text to be modeled as list of strings
 counter = 0
 for cl in classes:
@@ -66,8 +64,7 @@ for cl in classes:
 					print (str(text_counter))
 	if len(docs) < 1:
 		flag = 1 # Skips topic modeling if the class is empty		
-	
-					
+		
 #-------------------------
 	# 2) Starts topic modeling
 	if flag == 0:
@@ -78,7 +75,13 @@ for cl in classes:
 		exclude = set(string.punctuation)
 		lemma = WordNetLemmatizer()
 		def clean(doc):
-			stop_free = " ".join([i for i in doc.lower().split() if i not in stop])
+			word_count = {}
+			for word in doc.split(' '): # Prepares to skip words with low freq
+				if word in word_count:
+					word_count[word] += 1
+				else:
+					word_count[word] = 1
+			stop_free = " ".join([word for word in doc.lower().split(' ') if word not in stop and word_count[word] > 5])
 			punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
 			normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
 			return normalized
