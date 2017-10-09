@@ -76,7 +76,7 @@ for i in range(0, len(docs), text_block):
 	lemma = WordNetLemmatizer()
 	def clean(doc):
 		word_count = {}
-		for word in doc.split(' '):
+		for word in doc.split(' '): # Prepares to skip words with low freq
 			if word in word_count:
 				word_count[word] += 1
 			else:
