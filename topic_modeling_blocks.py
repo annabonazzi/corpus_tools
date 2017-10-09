@@ -14,7 +14,7 @@ output_folder = '/path/to/topics_folder/'
 lang = 'fr'
 topic_number = 300
 words_per_topic = 6
-min_freq = 5 # Minimum word frequency accaptable (rare words are ignored)
+min_freq = 5 # Minimum acceptable word frequency (rare words are ignored)
 text_block = 100000 # size of text chunks to divide the corpus in
 
 #---------------------------
