@@ -7,6 +7,17 @@ The script extracts texts with chosen attributes from the corpus and analyzes th
 
 Works only for python 2 (gensim currently unavailable for python3))
 '''
+# VARIABLES FOR USER TO CHANGE
+
+input_file = '/path/to/corpus_file.vrt'
+output_folder = '/path/to/topics_folder/'
+lang = 'fr'
+topic_number = 300
+words_per_topic = 6
+min_freq = 5 # Minimum word frequency accaptable (rare words are ignored)
+text_block = 100000 # size of text chunks to divide the corpus in
+
+#---------------------------
 # To time the script
 from datetime import datetime
 startTime = datetime.now()
@@ -17,16 +28,6 @@ import string
 # Importing Gensim (only python 2! .decode('utf-8')). If python3: install with "pip2 install gensim", then run script with "python2.7 script.py"
 import gensim
 from gensim import corpora
-#---------------------------
-# VARIABLES FOR USER TO CHANGE
-
-input_file = '/path/to/corpus_file.vrt'
-output_folder = '/path/to/topics_folder/'
-lang = 'fr'
-topic_number = 300
-words_per_topic = 6
-text_block = 100000 # size of text chunks to divide the corpus in
-
 #---------------------------
 
 # 1) Prepares text to be modeled as list of strings
@@ -81,7 +82,7 @@ for i in range(0, len(docs), text_block):
 				word_count[word] += 1
 			else:
 				word_count[word] = 1
-		stop_free = " ".join([word for word in doc.lower().split(' ') if word not in stop and word_count[word] > 2])
+		stop_free = " ".join([word for word in doc.lower().split(' ') if word not in stop and word_count[word] > min_freq])
 		punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
 		normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
 		return normalized
