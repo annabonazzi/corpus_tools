@@ -15,7 +15,7 @@ output_folder = '/path/to/topics_folder/'
 topic_number = 200
 words_per_topic = 8
 min_freq = 10 # Minimum acceptable word frequency (rare words are ignored)
-top_percent = 5 # Percentage of words to be skipped (too frequent)
+top_percent = 0.1 # Percentage of words to be skipped (too frequent)
 bottom_percent = 10 # Percentage of words to be skipped (too rare)
 lang = 'fr'
 #---------------------------
@@ -97,6 +97,14 @@ if flag == 0:
 		x = int(str(float("{:.5f}".format(len(sorted_tuples) / 100))).split('.')[0])
 		# Creates list of numbers that represent an acceptable frequency (not too high or too low index)
 		i_max = x*top_percent; i_min = -(x*bottom_percent)
+		def clean_percent(number):
+			if '.' in str(number):
+				number = int(str(number).split('.')[0])
+				if number == 0:
+					number = 1
+			return number
+		i_max = clean_percent(i_max)
+		i_min = clean_percent(i_min)
 		selected_tup = []
 		# Selects acceptable frequencies
 		selected_tup = sorted_tuples[i_max:i_min]	
