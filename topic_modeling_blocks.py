@@ -1,22 +1,23 @@
 #coding=utf8
 '''
-# Anna Bonazzi, 14/09/2017
+Anna Bonazzi, 14/09/2017
+
 Script to model document topics with LDA (Latent Dirichlet Allocation). Sample script assembled from https://www.analyticsvidhya.com/blog/2016/08/beginners-guide-to-topic-modeling-in-python/
 
-The script extracts texts with chosen attributes from the corpus and analyzes them in blocks of chosen length.
+Texts are assembled from a corpus based on certain features and then modeled.
 
-Works only for python 2 (gensim currently unavailable for python3))
+Works only for python2 (gensim currently unavailable for python3))
 '''
 # VARIABLES FOR USER TO CHANGE
 
 input_file = '/path/to/corpus_file.vrt'
 output_folder = '/path/to/topics_folder/'
+topic_number = 200
+words_per_topic = 8
+min_freq = 10 # Minimum acceptable word frequency (rare words are ignored)
+top_percent = 5 # Percentage of words to be skipped (too frequent)
+bottom_percent = 10 # Percentage of words to be skipped (too rare)
 lang = 'fr'
-topic_number = 300
-words_per_topic = 6
-min_freq = 5 # Minimum acceptable word frequency (rare words are ignored)
-text_block = 100000 # size of text chunks to divide the corpus in
-
 #---------------------------
 # To time the script
 from datetime import datetime
@@ -25,13 +26,15 @@ import os, glob, re, nltk
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 import string
-# Importing Gensim (only python 2! .decode('utf-8')). If python3: install with "pip2 install gensim", then run script with "python2.7 script.py"
+# Importing Gensim (only python 2! .decode('utf-8'))
+# if python3: install with "pip2 install gensim", then run script with "python2 script.py"
 import gensim
 from gensim import corpora
 #---------------------------
 
 # 1) Prepares text to be modeled as list of strings
 flag = 0
+fhandle = open (output_folder+lang+'_topics-'+str(topic_number)+'-'+str(words_per_topic)+'_min-'+str(min_freq)+'_cut-'+str(top_percent)+'-'+str(bottom_percent)+'.txt', 'a')
 print ('Going through corpus. Go have a coffee.\n')
 text_counter = 0
 counter = 0
@@ -59,35 +62,58 @@ with open (input_file, 'r') as f:
 			chunk = []
 			doc = []
 			if '00000' in str(text_counter):
-				print (str(text_counter))	
+				print (str(text_counter))
+if len(docs) < 1:
+	flag = 1 # Skips topic modeling if the class is empty		
 
+'''
 # Groups single doc strings into strings of 1000 docs each
-group = []
-for i in range(0, len(docs), text_block): 
-	group = docs[i:i + text_block]
-	fhandle = open (output_folder+str(i + text_block)+'_'+lang+'_topics-'+str(topic_number)+'-'+str(words_per_topic)+'-'+str(text_block)+'-pro-block_no-rare.txt', 'a')
+new_docs = []
+for i in range(0, len(docs), 1000): 
+	new_docs.append(' '.join(docs[i:i + 1000]))
+docs = []; docs = new_docs; new_docs = []
+'''
 #-------------------------
 # 2) Starts topic modeling
-
+if flag == 0:
 	print ('Starting topic modeling')
 	# Cleaning and preprocessing
 	langs = {'fr' : 'french', 'de' : 'german', 'it' : 'italian', 'en' : 'english'}
 	stop = set(stopwords.words(langs[lang]) + ['avoir', 'e', 'aucun']) # Also add custom "useless" words, such as stop = stopwords.words('english') + ['rt', 'via']
-	exclude = set(string.punctuation)
+	punct = set(string.punctuation)
 	lemma = WordNetLemmatizer()
 	def clean(doc):
 		word_count = {}
+		all_words = 0
 		for word in doc.split(' '): # Prepares to skip words with low freq
+			all_words += 1
 			if word in word_count:
 				word_count[word] += 1
 			else:
 				word_count[word] = 1
-		stop_free = " ".join([word for word in doc.lower().split(' ') if word not in stop and word_count[word] > min_freq])
-		punc_free = ''.join(ch for ch in stop_free if ch not in exclude)
-		normalized = " ".join(lemma.lemmatize(word) for word in punc_free.split())
-		return normalized
+		# word : tot = x : 100
+		sorted_tuples = sorted(word_count.items(), key=lambda pair: pair[1], reverse=True)
+		# Calculates percentage bins
+		x = int(str(float("{:.5f}".format(len(sorted_tuples) / 100))).split('.')[0])
+		# Creates list of numbers that represent an acceptable frequency (not too high or too low index)
+		i_max = x*top_percent; i_min = -(x*bottom_percent)
+		selected_tup = []
+		# Selects acceptable frequencies
+		selected_tup = sorted_tuples[i_max:i_min]	
+		sorted_tuples = []
+		selected_freq = []
+		for tup in selected_tup:
+			selected_freq.append(tup[1])
+		# Splits and reassembles text without super rare/frequent words
+		rare_free = ' '.join([word for word in doc.split(' ') if word_count[word] in selected_freq and word_count[word] > min_freq])
+		# Splits and reassemples text without stopwords
+		stop_free = ' '.join([word for word in doc.lower().split(' ') if word not in stop])
+		# Splits and reassembles text without punctuation
+		punc_free = ''.join(ch for ch in stop_free if ch not in punct)
+		#normalized = ' '.join(lemma.lemmatize(word) for word in punc_free.split())
+		return punc_free # return normalized
 
-	doc_clean = [clean(doc).split() for doc in group] # List of wordlists
+	doc_clean = [clean(doc).split() for doc in docs] # List of wordlists
 	
 	# Preparing Document-Term Matrix
 
@@ -118,8 +144,7 @@ for i in range(0, len(docs), text_block):
 	Lda = None
 	ldamodel = None
 	doc_clean = []
-	group = []
-	# New documents group starts
+	# New document starts
 
 #--------------------------
 # To time the script
