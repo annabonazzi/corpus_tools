@@ -109,8 +109,7 @@ for word in word_dic1:
 		loglik = 2 * ((word_dic1[word] * np.log(word_dic1[word]/e1)) + (word_dic2[word] * np.log(word_dic2[word]/e2)))
 		if loglik >= 3.8:
 			keywords[word] = loglik
-		else:
-			all_keywords[word] = loglik
+		all_keywords[word] = loglik
 
 sorted_tuples = sorted(keywords.items(), key=lambda pair: pair[1], reverse=True)
 
